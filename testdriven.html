@@ -1,0 +1,80 @@
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Vending Machine Change Calculator TDD Tutorial</title>
+    <!-- Load the QUnit CSS file from CDN - Require to display our tests attractively -->
+    <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-1.18.0.css">
+    <!-- Pure CSS is a minimalist CSS file we have included to make things look nicer -->
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+</head>
+
+<body style='margin: 0 1em;'>
+    <div id='main'>
+        <h1>Vending Machine
+            <em>Change Calculator</em>
+        </h1>
+        <h2>Calculate the change (
+            <em>coins</em>) to return to a customer when they buy something.</h2>
+    </div>
+
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
+    <!-- Load the QUnit Testing Framework from CDN - this is the important bit ... -->
+    <script src="https://code.jquery.com/qunit/qunit-1.18.0.js"></script>
+
+    <script>
+        var cointypes = [200, 100, 50, 20, 10, 5, 2, 1];
+        function getChange(price, paid) {
+            if (typeof (price) === 'number' && typeof (paid) === 'number') {
+                if(paid == 'Infinity'){
+                    return 'please enter the correct amount';
+                }
+                if(paid < 500){
+                    return 'please enter a min of 500';
+                }
+                var difference = paid - price;
+                var change = [];
+                cointypes.forEach(function (coin) {
+                    // keep adding the current coin until it's more than the difference
+                    while (difference >= coin) {
+                        change.push(coin);
+                        difference = difference - coin;
+                    }
+                });
+                return change;
+            } else {
+                return 'please enter only numbers';
+            }
+        }
+    </script>
+
+    <script>
+        // This is what a simple unit test looks like:
+        test('when payable = 400, paid = 500, I should get the change', function (assert) {
+            var result = getChange(400, 500);
+            result = JSON.stringify(result);
+            assert.equal(result, '[100]'); // just so we know everything loaded ok
+        });
+
+        test('when payable = 400, paid = "xxxx", I should get the error', function (assert) {
+            var result = getChange(400, "xxxx");  // this should be 0
+            assert.equal(result, "please enter only numbers"); // we *expect* this to fail
+        });
+
+        test('when payable = 400, paid = 10 / 0, I should get the error saying please give the correct amount', function (assert) {
+            var result = getChange(400,Infinity);  // this should be 0
+            assert.equal(result, 'please enter the correct amount'); // we *expect* this to fail
+        });
+
+         test('when payable = 400, paid = 450, I should display the minimum amount to be paid', function (assert) {
+            var result = getChange(400,450);  // this should be 0
+            assert.equal(result, 'please enter a min of 500'); // we *expect* this to fail
+        });
+
+
+
+    </script>
+</body>
+
+</html>
